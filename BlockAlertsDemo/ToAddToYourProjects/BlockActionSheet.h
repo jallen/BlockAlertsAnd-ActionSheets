@@ -8,11 +8,7 @@
 /**
  * A simple block-enabled API wrapper on top of UIActionSheet.
  */
-@interface BlockActionSheet : NSObject {
-@private
-    NSMutableArray *_blocks;
-    CGFloat _height;
-}
+@interface BlockActionSheet : NSObject
 
 @property (nonatomic, readonly, strong) UIView *view;
 @property (nonatomic, readwrite) BOOL vignetteBackground;
@@ -28,6 +24,7 @@
 - (void)setCancelButtonWithTitle:(NSString *) title atIndex:(NSInteger)index block:(void (^)()) block;
 - (void)setDestructiveButtonWithTitle:(NSString *) title atIndex:(NSInteger)index block:(void (^)()) block;
 - (void)addButtonWithTitle:(NSString *) title atIndex:(NSInteger)index block:(void (^)()) block;
+- (void)addView:(UIView *)view atIndex:(NSInteger)index;
 
 - (void)showInView:(UIView *)passedView;
 
