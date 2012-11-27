@@ -162,7 +162,7 @@ static UIFont *buttonFont = nil;
     [self addButtonWithTitle:title color:@"gray" block:block atIndex:index];
 }
 
-- (void)showInView:(UIView *)passedView {
+- (void)showInView:(UIView *)passedView completion:(void (^)())completion {
 	for (UIView *view in _views) {
 		[_view addSubview:view];
 	}
@@ -186,17 +186,25 @@ static UIFont *buttonFont = nil;
 												delay:0.0
 											options:UIViewAnimationCurveEaseOut
 									 animations:^{
-											 [BlockBackground sharedInstance].alpha = 1.0f;
-											 _view.center = center;
+										 [BlockBackground sharedInstance].alpha = 1.0f;
+										 _view.center = center;
 									 } completion:^(BOOL finished) {
-											 [UIView animateWithDuration:0.1
-																						 delay:0.0
-																					 options:UIViewAnimationOptionAllowUserInteraction
-																				animations:^{
-																						center.y += kActionSheetBounce;
-																						_view.center = center;
-																				} completion:nil];
+										 [UIView animateWithDuration:0.1
+																					 delay:0.0
+																				 options:UIViewAnimationOptionAllowUserInteraction
+																			animations:^{
+																				center.y += kActionSheetBounce;
+																				_view.center = center;
+																			} completion:^(BOOL finished) {
+																				if (completion) {
+																					completion();
+																				}
+																			}];
 									 }];
+}
+
+- (void)showInView:(UIView *)passedView {
+	[self showInView:passedView completion:nil];
 }
 
 - (void)dismissWithClickedButtonIndex:(NSInteger)buttonIndex animated:(BOOL)animated 

@@ -17,15 +17,16 @@
 
 - (id)initWithTitle:(NSString *)title;
 
-- (void)setCancelButtonWithTitle:(NSString *) title block:(void (^)()) block;
-- (void)setDestructiveButtonWithTitle:(NSString *) title block:(void (^)()) block;
-- (void)addButtonWithTitle:(NSString *) title block:(void (^)()) block;
+- (void)setCancelButtonWithTitle:(NSString *)title block:(void (^)())block;
+- (void)setDestructiveButtonWithTitle:(NSString *)title block:(void (^)())block;
+- (void)addButtonWithTitle:(NSString *)title block:(void (^)())block;
 
-- (void)setCancelButtonWithTitle:(NSString *) title atIndex:(NSInteger)index block:(void (^)()) block;
-- (void)setDestructiveButtonWithTitle:(NSString *) title atIndex:(NSInteger)index block:(void (^)()) block;
-- (void)addButtonWithTitle:(NSString *) title atIndex:(NSInteger)index block:(void (^)()) block;
+- (void)setCancelButtonWithTitle:(NSString *)title atIndex:(NSInteger)index block:(void (^)())block;
+- (void)setDestructiveButtonWithTitle:(NSString *)title atIndex:(NSInteger)index block:(void (^)())block;
+- (void)addButtonWithTitle:(NSString *)title atIndex:(NSInteger)index block:(void (^)())block;
 - (void)addView:(UIView *)view atIndex:(NSInteger)index;
 
+- (void)showInView:(UIView *)passedView completion:(void (^)())completion;
 - (void)showInView:(UIView *)passedView;
 
 - (void)buttonClicked:(id)sender;
