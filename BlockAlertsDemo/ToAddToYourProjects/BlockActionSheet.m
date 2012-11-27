@@ -209,40 +209,41 @@ static UIFont *buttonFont = nil;
 
 - (void)dismissWithClickedButtonIndex:(NSInteger)buttonIndex animated:(BOOL)animated 
 {
-    if (buttonIndex >= 0 && buttonIndex < [_blocks count])
-    {
-        id obj = [_blocks objectAtIndex: buttonIndex];
-        if (![obj isEqual:[NSNull null]])
-        {
-            ((void (^)())obj)();
-        }
-    }
-    
-    if (animated)
-    {
-        CGPoint center = _view.center;
-        center.y += _view.bounds.size.height;
-        [UIView animateWithDuration:0.4
-                              delay:0.0
-                            options:UIViewAnimationCurveEaseIn
-                         animations:^{
-                             _view.center = center;
-                             [[BlockBackground sharedInstance] reduceAlphaIfEmpty];
-                         } completion:^(BOOL finished) {
-                             [[BlockBackground sharedInstance] removeView:_view];
-                             _view = nil;
-                         }];
-    }
-    else
-    {
-        [[BlockBackground sharedInstance] removeView:_view];
-        _view = nil;
-    }
+	if (buttonIndex >= 0 && buttonIndex < [_blocks count])
+	{
+			id obj = [_blocks objectAtIndex: buttonIndex];
+			if (![obj isEqual:[NSNull null]])
+			{
+					((void (^)())obj)();
+			}
+	}
+  
+	[self dismiss:animated];
+}
+
+- (void)dismiss:(BOOL)animated {
+	if (animated) {
+		CGPoint center = _view.center;
+		center.y += _view.bounds.size.height;
+		[UIView animateWithDuration:0.4
+													delay:0.0
+												options:UIViewAnimationCurveEaseIn
+										 animations:^{
+											 _view.center = center;
+											 [[BlockBackground sharedInstance] reduceAlphaIfEmpty];
+										 } completion:^(BOOL finished) {
+											 [[BlockBackground sharedInstance] removeView:_view];
+											 _view = nil;
+										 }];
+	} else {
+		[[BlockBackground sharedInstance] removeView:_view];
+		_view = nil;
+	}
 }
 
 #pragma mark - Action
 
-- (void)buttonClicked:(id)sender 
+- (void)buttonClicked:(id)sender
 {
     /* Run the button's block */
     int buttonIndex = [_views indexOfObject:sender];

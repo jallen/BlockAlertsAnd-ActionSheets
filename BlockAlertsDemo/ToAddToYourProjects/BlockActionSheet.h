@@ -31,6 +31,8 @@
 
 - (void)buttonClicked:(id)sender;
 
+- (void)dismiss:(BOOL)animated;
+
 - (NSUInteger)buttonCount;
 
 @end
