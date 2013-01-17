@@ -6,6 +6,7 @@
 #import "BlockAlertView.h"
 #import "BlockBackground.h"
 #import "BlockUI.h"
+#import "ColorButton.h"
 
 @implementation BlockAlertView
 
@@ -137,9 +138,6 @@ static UIFont *buttonFont = nil;
         NSArray *block = [_blocks objectAtIndex:i];
         NSString *title = [block objectAtIndex:1];
         NSString *color = [block objectAtIndex:2];
-
-        UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"alert-%@-button.png", color]];
-        image = [image stretchableImageWithLeftCapWidth:(int)(image.size.width+1)>>1 topCapHeight:0];
         
         CGFloat maxHalfWidth = floorf((_view.bounds.size.width-kAlertViewBorder*3)*0.5);
         CGFloat width = _view.bounds.size.width-kAlertViewBorder*2;
@@ -195,23 +193,22 @@ static UIFont *buttonFont = nil;
                 xOffset = floorf((_view.bounds.size.width - width) * 0.5);
             }
         }
-        
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-        button.frame = CGRectMake(xOffset, _height, width, kAlertButtonHeight);
-        button.titleLabel.font = buttonFont;
-        button.titleLabel.minimumFontSize = 10;
-        button.titleLabel.textAlignment = UITextAlignmentCenter;
-        button.titleLabel.shadowOffset = kAlertViewButtonShadowOffset;
-        button.backgroundColor = [UIColor clearColor];
+			
+				UIColor *buttonColor;
+				if ([color isEqualToString:@"red"]) {
+					buttonColor = [UIColor colorWithRed:56.f/255.f green:192.f/255.f blue:252.f/255.f alpha:1.0];
+				} else if ([color isEqualToString:@"black"]) {
+					buttonColor = [UIColor colorWithWhite:0.2	alpha:1.0];
+				} else {
+					buttonColor = [UIColor grayColor];
+				}
+      
+				ColorButton *button = [[ColorButton alloc] initWithFrame:CGRectMake(xOffset, _height, width, kAlertButtonHeight)];
+				button.color = buttonColor;
+				button.titleLabel.font = buttonFont;
+				[button setTitle:title forState:UIControlStateNormal];
+				[button addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
         button.tag = i+1;
-        
-        [button setBackgroundImage:image forState:UIControlStateNormal];
-        [button setTitleColor:kAlertViewButtonTextColor forState:UIControlStateNormal];
-        [button setTitleShadowColor:kAlertViewButtonShadowColor forState:UIControlStateNormal];
-        [button setTitle:title forState:UIControlStateNormal];
-        button.accessibilityLabel = title;
-        
-        [button addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
         
         [_view addSubview:button];
         

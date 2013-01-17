@@ -24,7 +24,7 @@
 	
 	self.cornerRadius = 6.f;
 	self.borderWidth = 3.5f;
-	self.color = RGBCOLOR(56, 192, 252);
+	self.color = [UIColor colorWithRed:56.f/255.f green:192.f/255.f blue:252.f/255.f alpha:1.0]; // a nice blue
 	self.backgroundColor = [UIColor clearColor];
   
 	self.titleLabel.font = [UIFont boldSystemFontOfSize:20.f];
