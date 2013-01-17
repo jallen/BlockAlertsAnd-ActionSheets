@@ -6,6 +6,7 @@
 #import "BlockActionSheet.h"
 #import "BlockBackground.h"
 #import "BlockUI.h"
+#import "ColorButton.h"
 
 @interface BlockActionSheet() {
 	NSMutableArray *_blocks;
@@ -85,24 +86,22 @@ static UIFont *buttonFont = nil;
 }
 
 - (void)addButtonWithTitle:(NSString *)title color:(NSString*)color block:(void (^)())block atIndex:(NSInteger)index {
-	UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"action-%@-button.png", color]];
-	image = [image stretchableImageWithLeftCapWidth:(int)(image.size.width)>>1 topCapHeight:0];
+	UIColor *buttonColor;
+	if ([color isEqualToString:@"red"]) {
+		buttonColor = [UIColor redColor];
+	} else if ([color isEqualToString:@"black"]) {
+		buttonColor = [UIColor colorWithWhite:0.2	alpha:1.0];
+	} else {
+		buttonColor = [UIColor grayColor];
+	}
 	
-	UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-	button.frame = CGRectMake(kActionSheetBorder, _height, _view.bounds.size.width-kActionSheetBorder*2, kActionSheetButtonHeight);
+	ColorButton *button = [[ColorButton alloc] initWithFrame:CGRectMake(kActionSheetBorder,
+																																			_height,
+																																			_view.bounds.size.width-kActionSheetBorder*2,
+																																			kActionSheetButtonHeight)];
+	button.color = buttonColor;
 	button.titleLabel.font = buttonFont;
-	button.titleLabel.minimumFontSize = 6;
-	button.titleLabel.adjustsFontSizeToFitWidth = YES;
-	button.titleLabel.textAlignment = UITextAlignmentCenter;
-	button.titleLabel.shadowOffset = kActionSheetButtonShadowOffset;
-	button.backgroundColor = [UIColor clearColor];
-	
-	[button setBackgroundImage:image forState:UIControlStateNormal];
-	[button setTitleColor:kActionSheetButtonTextColor forState:UIControlStateNormal];
-	[button setTitleShadowColor:kActionSheetButtonShadowColor forState:UIControlStateNormal];
 	[button setTitle:title forState:UIControlStateNormal];
-	button.accessibilityLabel = title;
-	
 	[button addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
 	_height += kActionSheetButtonHeight + kActionSheetBorder;
 	
