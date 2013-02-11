@@ -29,8 +29,6 @@
 - (void)showInView:(UIView *)passedView completion:(void (^)())completion;
 - (void)showInView:(UIView *)passedView;
 
-- (void)buttonClicked:(id)sender;
-
 - (void)dismiss:(BOOL)animated;
 
 - (NSUInteger)buttonCount;

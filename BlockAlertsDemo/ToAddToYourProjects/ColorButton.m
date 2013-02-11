@@ -12,10 +12,13 @@
 	BOOL _isSelected;
 }
 
+- (void)_callActionBlock:(id)sender;
+
 @end
 
 @implementation ColorButton
 
+@synthesize actionBlock;
 @synthesize cornerRadius;
 @synthesize borderWidth;
 
@@ -38,6 +41,17 @@
 	[self setTitleShadowColor:[UIColor colorWithWhite:0.3 alpha:1.0] forState:UIControlStateNormal];
 	
 	return self;
+}
+
+- (void)setActionBlock:(ActionBlock)block {
+	actionBlock = [block copy];
+	[self addTarget:self action:@selector(_callActionBlock:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)_callActionBlock:(id)sender {
+	if (self.actionBlock) {
+		self.actionBlock();
+	}
 }
 
 #pragma mark - Touch Methods

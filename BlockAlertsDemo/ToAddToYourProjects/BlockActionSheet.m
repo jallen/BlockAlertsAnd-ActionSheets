@@ -9,7 +9,6 @@
 #import "ColorButton.h"
 
 @interface BlockActionSheet() {
-	NSMutableArray *_blocks;
 	NSMutableArray *_views;
 	CGFloat _height;
 }
@@ -50,7 +49,6 @@ static UIFont *buttonFont = nil;
         UIWindow *parentView = [BlockBackground sharedInstance];
         CGRect frame = parentView.bounds;
         _view = [[UIView alloc] initWithFrame:frame];
-        _blocks = [[NSMutableArray alloc] init];
 				_views = [[NSMutableArray alloc] init];
         _height = kActionSheetTopMargin;
 
@@ -82,7 +80,7 @@ static UIFont *buttonFont = nil;
 
 - (NSUInteger)buttonCount
 {
-    return _blocks.count;
+    return _views.count;
 }
 
 - (void)addButtonWithTitle:(NSString *)title color:(NSString*)color block:(void (^)())block atIndex:(NSInteger)index {
@@ -95,40 +93,37 @@ static UIFont *buttonFont = nil;
 		buttonColor = [UIColor grayColor];
 	}
 	
-	ColorButton *button = [[ColorButton alloc] initWithFrame:CGRectMake(kActionSheetBorder,
-																																			_height,
+	ColorButton *button = [[ColorButton alloc] initWithFrame:CGRectMake(0,
+																																			0,
 																																			_view.bounds.size.width-kActionSheetBorder*2,
 																																			kActionSheetButtonHeight)];
 	button.color = buttonColor;
 	button.titleLabel.font = buttonFont;
 	[button setTitle:title forState:UIControlStateNormal];
-	[button addTarget:self action:@selector(buttonClicked:) forControlEvents:UIControlEventTouchUpInside];
-	_height += kActionSheetButtonHeight + kActionSheetBorder;
-	
-	if (!block) {
-		block = ^{};
-	}
+	button.actionBlock = ^{
+		if (block) {
+			block();
+		}
+		[self dismiss:YES];
+	};
 	
 	if (index >= 0) {
-		[_blocks insertObject:block atIndex:index];
 		[_views insertObject:button atIndex:index];
 	} else {
-		[_blocks addObject:block];
 		[_views addObject:button];
 	}
 }
 
 - (void)addView:(UIView *)view atIndex:(NSInteger)index {
-	view.frame = CGRectMake(kActionSheetBorder, _height, _view.bounds.size.width-kActionSheetBorder*2, view.frame.size.height);
+	view.frame = CGRectMake(0,
+													0,
+													_view.bounds.size.width-kActionSheetBorder*2,
+													view.frame.size.height);
 	if (index >= 0) {
-		[_blocks insertObject:[NSNull null] atIndex:index];
 		[_views insertObject:view atIndex:index];
 	} else {
-		[_blocks addObject:[NSNull null]];
 		[_views addObject:view];
 	}
-	
-	_height += view.frame.size.height + kActionSheetBorder;
 }
 
 - (void)setDestructiveButtonWithTitle:(NSString *)title block:(void (^)())block
@@ -163,7 +158,13 @@ static UIFont *buttonFont = nil;
 
 - (void)showInView:(UIView *)passedView completion:(void (^)())completion {
 	for (UIView *view in _views) {
+		view.frame = CGRectMake(kActionSheetBorder,
+														_height,
+														_view.bounds.size.width-kActionSheetBorder*2,
+														view.frame.size.height);
 		[_view addSubview:view];
+		
+		_height += view.frame.size.height + kActionSheetBorder;
 	}
 	
 	UIImageView *modalBackground = [[UIImageView alloc] initWithFrame:_view.bounds];
@@ -206,20 +207,6 @@ static UIFont *buttonFont = nil;
 	[self showInView:passedView completion:nil];
 }
 
-- (void)dismissWithClickedButtonIndex:(NSInteger)buttonIndex animated:(BOOL)animated 
-{
-	if (buttonIndex >= 0 && buttonIndex < [_blocks count])
-	{
-			id obj = [_blocks objectAtIndex: buttonIndex];
-			if (![obj isEqual:[NSNull null]])
-			{
-					((void (^)())obj)();
-			}
-	}
-  
-	[self dismiss:animated];
-}
-
 - (void)dismiss:(BOOL)animated {
 	if (animated) {
 		CGPoint center = _view.center;
@@ -238,15 +225,6 @@ static UIFont *buttonFont = nil;
 		[[BlockBackground sharedInstance] removeView:_view];
 		_view = nil;
 	}
-}
-
-#pragma mark - Action
-
-- (void)buttonClicked:(id)sender
-{
-    /* Run the button's block */
-    int buttonIndex = [_views indexOfObject:sender];
-    [self dismissWithClickedButtonIndex:buttonIndex animated:YES];
 }
 
 @end
