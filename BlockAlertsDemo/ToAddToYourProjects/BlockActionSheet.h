@@ -24,6 +24,8 @@
 - (void)setCancelButtonWithTitle:(NSString *)title atIndex:(NSInteger)index block:(void (^)())block;
 - (void)setDestructiveButtonWithTitle:(NSString *)title atIndex:(NSInteger)index block:(void (^)())block;
 - (void)addButtonWithTitle:(NSString *)title atIndex:(NSInteger)index block:(void (^)())block;
+- (void)addButtonWithTitle:(NSString *)title color:(UIColor *)color block:(void (^)())block;
+- (void)addButtonWithTitle:(NSString *)title color:(UIColor *)color block:(void (^)())block atIndex:(NSInteger)index;
 - (void)addView:(UIView *)view atIndex:(NSInteger)index;
 
 - (void)showInView:(UIView *)passedView completion:(void (^)())completion;

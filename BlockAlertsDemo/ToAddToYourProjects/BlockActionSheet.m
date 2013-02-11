@@ -83,21 +83,16 @@ static UIFont *buttonFont = nil;
     return _views.count;
 }
 
-- (void)addButtonWithTitle:(NSString *)title color:(NSString*)color block:(void (^)())block atIndex:(NSInteger)index {
-	UIColor *buttonColor;
-	if ([color isEqualToString:@"red"]) {
-		buttonColor = [UIColor redColor];
-	} else if ([color isEqualToString:@"black"]) {
-		buttonColor = [UIColor colorWithWhite:0.2	alpha:1.0];
-	} else {
-		buttonColor = [UIColor grayColor];
-	}
-	
+- (void)addButtonWithTitle:(NSString *)title color:(UIColor *)color block:(void (^)())block {
+	[self addButtonWithTitle:title color:color block:block atIndex:-1];
+}
+
+- (void)addButtonWithTitle:(NSString *)title color:(UIColor *)color block:(void (^)())block atIndex:(NSInteger)index {	
 	ColorButton *button = [[ColorButton alloc] initWithFrame:CGRectMake(0,
 																																			0,
 																																			_view.bounds.size.width-kActionSheetBorder*2,
 																																			kActionSheetButtonHeight)];
-	button.color = buttonColor;
+	button.color = color;
 	button.titleLabel.font = buttonFont;
 	[button setTitle:title forState:UIControlStateNormal];
 	button.actionBlock = ^{
@@ -107,11 +102,7 @@ static UIFont *buttonFont = nil;
 		[self dismiss:YES];
 	};
 	
-	if (index >= 0) {
-		[_views insertObject:button atIndex:index];
-	} else {
-		[_views addObject:button];
-	}
+	[self addView:button atIndex:index];
 }
 
 - (void)addView:(UIView *)view atIndex:(NSInteger)index {
@@ -119,52 +110,67 @@ static UIFont *buttonFont = nil;
 													0,
 													_view.bounds.size.width-kActionSheetBorder*2,
 													view.frame.size.height);
-	if (index >= 0) {
-		[_views insertObject:view atIndex:index];
+	if (index >= 0 && index < _views.count) {
+		NSMutableArray *views = [_views objectAtIndex:index];
+		if (!views) {
+			views = [[NSMutableArray alloc] init];
+			[_views insertObject:views atIndex:index];
+		}
+		[views addObject:view];
 	} else {
-		[_views addObject:view];
+		NSMutableArray *views = [[NSMutableArray alloc] init];
+		[views addObject:view];
+		[_views addObject:views];
 	}
 }
 
 - (void)setDestructiveButtonWithTitle:(NSString *)title block:(void (^)())block
 {
-    [self addButtonWithTitle:title color:@"red" block:block atIndex:-1];
+	[self addButtonWithTitle:title color:[UIColor redColor] block:block atIndex:-1];
 }
 
 - (void)setCancelButtonWithTitle:(NSString *)title block:(void (^)())block
 {
-    [self addButtonWithTitle:title color:@"black" block:block atIndex:-1];
+    [self addButtonWithTitle:title color:[UIColor colorWithWhite:0.2	alpha:1.0] block:block atIndex:-1];
 }
 
 - (void)addButtonWithTitle:(NSString *)title block:(void (^)())block 
 {
-    [self addButtonWithTitle:title color:@"gray" block:block atIndex:-1];
+    [self addButtonWithTitle:title color:[UIColor grayColor] block:block atIndex:-1];
 }
 
 - (void)setDestructiveButtonWithTitle:(NSString *)title atIndex:(NSInteger)index block:(void (^)())block
 {
-    [self addButtonWithTitle:title color:@"red" block:block atIndex:index];
+    [self addButtonWithTitle:title color:[UIColor redColor] block:block atIndex:index];
 }
 
 - (void)setCancelButtonWithTitle:(NSString *)title atIndex:(NSInteger)index block:(void (^)())block
 {
-    [self addButtonWithTitle:title color:@"black" block:block atIndex:index];
+    [self addButtonWithTitle:title color:[UIColor colorWithWhite:0.2	alpha:1.0] block:block atIndex:index];
 }
 
 - (void)addButtonWithTitle:(NSString *)title atIndex:(NSInteger)index block:(void (^)())block 
 {
-    [self addButtonWithTitle:title color:@"gray" block:block atIndex:index];
+    [self addButtonWithTitle:title color:[UIColor grayColor] block:block atIndex:index];
 }
 
 - (void)showInView:(UIView *)passedView completion:(void (^)())completion {
-	for (UIView *view in _views) {
-		view.frame = CGRectMake(kActionSheetBorder,
-														_height,
-														_view.bounds.size.width-kActionSheetBorder*2,
-														view.frame.size.height);
-		[_view addSubview:view];
-		
-		_height += view.frame.size.height + kActionSheetBorder;
+	CGFloat maxHeight;
+	CGFloat viewWidth;
+	for (NSArray *views in _views) {
+		maxHeight = 0.f;
+		for (int i = 0; i < views.count; i++) {
+			UIView *view = views[i];
+			viewWidth = ((_view.bounds.size.width-kActionSheetBorder*2) - kActionSheetBorder * (views.count - 1)) / views.count;
+			view.frame = CGRectMake(kActionSheetBorder + ((viewWidth + kActionSheetBorder) * i),
+															_height,
+															viewWidth,
+															view.frame.size.height);
+			[_view addSubview:view];
+			
+			maxHeight = MAX(maxHeight, view.frame.size.height);
+		}
+		_height += maxHeight + kActionSheetBorder;
 	}
 	
 	UIImageView *modalBackground = [[UIImageView alloc] initWithFrame:_view.bounds];
