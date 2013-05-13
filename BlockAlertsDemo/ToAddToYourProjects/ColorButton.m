@@ -3,7 +3,7 @@
 //  InstaQuote
 //
 //  Created by Jared Allen on 1/16/13.
-//  Copyright (c) 2013 Peapod Labs. All rights reserved.
+//  Copyright (c) 2013 Jared Allen. All rights reserved.
 //
 
 #import "ColorButton.h"
