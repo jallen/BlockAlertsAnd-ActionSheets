@@ -31,9 +31,9 @@
 	self.backgroundColor = [UIColor clearColor];
   
 	self.titleLabel.font = [UIFont boldSystemFontOfSize:20.f];
-	self.titleLabel.minimumFontSize = 6;
+	self.titleLabel.minimumScaleFactor = 0.3f;
 	self.titleLabel.adjustsFontSizeToFitWidth = YES;
-	self.titleLabel.textAlignment = UITextAlignmentCenter;
+	self.titleLabel.textAlignment = NSTextAlignmentCenter;
 	self.titleLabel.shadowOffset = CGSizeMake(0, -1);
 	self.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 10);
 	self.backgroundColor = [UIColor clearColor];
