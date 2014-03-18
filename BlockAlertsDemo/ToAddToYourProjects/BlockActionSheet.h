@@ -32,6 +32,7 @@
 - (void)showInView:(UIView *)passedView;
 
 - (void)dismiss:(BOOL)animated;
+- (void)dismiss:(BOOL)animated withCompletion:(void(^)())completion;
 
 - (NSUInteger)buttonCount;
 

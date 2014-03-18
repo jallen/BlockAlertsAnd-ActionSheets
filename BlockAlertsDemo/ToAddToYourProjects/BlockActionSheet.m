@@ -96,10 +96,11 @@ static UIFont *buttonFont = nil;
 	button.titleLabel.font = buttonFont;
 	[button setTitle:title forState:UIControlStateNormal];
 	button.actionBlock = ^{
-		if (block) {
-			block();
-		}
-		[self dismiss:YES];
+		[self dismiss:YES withCompletion:^{
+            if (block) {
+                block();
+            }
+        }];
 	};
 	
 	[self addView:button atIndex:index];
@@ -188,25 +189,25 @@ static UIFont *buttonFont = nil;
 	__block CGPoint center = _view.center;
 	center.y -= _height + kActionSheetBounce;
 	
-	[UIView animateWithDuration:0.4
-												delay:0.0
-											options:UIViewAnimationCurveEaseOut
-									 animations:^{
-										 [BlockBackground sharedInstance].alpha = 1.0f;
-										 _view.center = center;
-									 } completion:^(BOOL finished) {
-										 [UIView animateWithDuration:0.1
-																					 delay:0.0
-																				 options:UIViewAnimationOptionAllowUserInteraction
-																			animations:^{
-																				center.y += kActionSheetBounce;
-																				_view.center = center;
-																			} completion:^(BOOL finished) {
-																				if (completion) {
-																					completion();
-																				}
-																			}];
-									 }];
+	[UIView animateWithDuration:0.3
+                          delay:0.0
+                        options:UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         [BlockBackground sharedInstance].alpha = 1.0f;
+                         _view.center = center;
+                     } completion:^(BOOL finished) {
+                         [UIView animateWithDuration:0.1
+                                               delay:0.0
+                                             options:UIViewAnimationOptionAllowUserInteraction
+                                          animations:^{
+                                              center.y += kActionSheetBounce;
+                                              _view.center = center;
+                                          } completion:^(BOOL finished) {
+                                              if (completion) {
+                                                  completion();
+                                              }
+                                          }];
+                     }];
 }
 
 - (void)showInView:(UIView *)passedView {
@@ -214,22 +215,34 @@ static UIFont *buttonFont = nil;
 }
 
 - (void)dismiss:(BOOL)animated {
+    [self dismiss:animated withCompletion:nil];
+}
+
+- (void)dismiss:(BOOL)animated withCompletion:(void(^)())completion {
 	if (animated) {
 		CGPoint center = _view.center;
 		center.y += _view.bounds.size.height;
-		[UIView animateWithDuration:0.4
-													delay:0.0
-												options:UIViewAnimationCurveEaseIn
-										 animations:^{
-											 _view.center = center;
-											 [[BlockBackground sharedInstance] reduceAlphaIfEmpty];
-										 } completion:^(BOOL finished) {
-											 [[BlockBackground sharedInstance] removeView:_view];
-											 _view = nil;
-										 }];
+		[UIView animateWithDuration:0.3
+                              delay:0.0
+                            options:UIViewAnimationOptionCurveEaseIn
+                         animations:^{
+                             _view.center = center;
+                             [[BlockBackground sharedInstance] reduceAlphaIfEmpty];
+                         } completion:^(BOOL finished) {
+                             [[BlockBackground sharedInstance] removeView:_view];
+                             _view = nil;
+                             
+                             if (completion) {
+                                 completion();
+                             }
+                         }];
 	} else {
 		[[BlockBackground sharedInstance] removeView:_view];
 		_view = nil;
+        
+        if (completion) {
+            completion();
+        }
 	}
 }
 
