@@ -45,7 +45,7 @@
         [theTextField setContentVerticalAlignment:UIControlContentVerticalAlignmentCenter];
         [theTextField setAutocapitalizationType:UITextAutocapitalizationTypeWords];
         [theTextField setBorderStyle:UITextBorderStyleRoundedRect];
-        [theTextField setTextAlignment:UITextAlignmentCenter];
+        [theTextField setTextAlignment:NSTextAlignmentCenter];
         [theTextField setClearButtonMode:UITextFieldViewModeAlways];
         
         if (defaultText)
@@ -93,7 +93,7 @@
         
         [UIView animateWithDuration:0.3
                               delay:0.0
-                            options:UIViewAnimationCurveEaseOut
+                            options:UIViewAnimationOptionCurveEaseOut
                          animations:^{
                              _view.frame = frame;
                          } 
